@@ -111,7 +111,7 @@ int main(int argc, char* argv[]) {
 
   // Load the player texture
   Player player;
-  player.texture = load_texture(renderer, "D:/Documents/C/include/player.png");
+  player.texture = load_texture(renderer, "../../include/player.png");
   player.rect.w = 32;
   player.rect.h = 64;
   player.x_pos = 400;
