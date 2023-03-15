@@ -5,6 +5,7 @@ typedef struct {
   SDL_Rect rect;
   int speed;
   SDL_Texture* texture;
+  int jump_time;
   int x_pos;       // player's horizontal position
   int x_velocity;  // player's horizontal velocity
   int y_pos;       // player's vertical position
@@ -31,7 +32,9 @@ void handleInput(Player* player) {
             break;
           case SDLK_SPACE:
             // Jump when the spacebar is pressed
+            if (player->jump_time >= 2) break;
             player->y_velocity = -10;
+            player->jump_time++;
             break;
         }
         break;
@@ -72,6 +75,12 @@ void update(Player* player) {
     player->y_velocity = 0;
   }
 
+  //check if player if on the ground
+  if (player->y_pos == 400) {
+    player->jump_time = 0;
+  }
+
+
   // Update player rectangle position
   player->rect.x = player->x_pos;
   player->rect.y = player->y_pos;
@@ -111,6 +120,7 @@ int main(int argc, char* argv[]) {
 
   // Load the player texture
   Player player;
+  player.jump_time = 0;
   player.texture = load_texture(renderer, "../../include/player.png");
   player.rect.w = 32;
   player.rect.h = 64;
