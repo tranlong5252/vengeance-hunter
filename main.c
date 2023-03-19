@@ -13,6 +13,8 @@ typedef struct {
 } Player;
 
 
+SDL_RendererFlip flip;
+
 void handleInput(Player* player) {
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
@@ -25,10 +27,12 @@ void handleInput(Player* player) {
           case SDLK_LEFT:
             // Move left when the left arrow key is pressed
             player->x_velocity = -2;
+            flip = SDL_FLIP_HORIZONTAL;
             break;
           case SDLK_RIGHT:
             // Move right when the right arrow key is pressed
             player->x_velocity = 2;
+            flip = SDL_FLIP_NONE;
             break;
           case SDLK_SPACE:
             // Jump when the spacebar is pressed
@@ -41,6 +45,7 @@ void handleInput(Player* player) {
       case SDL_KEYUP:
         switch (event.key.keysym.sym) {
           case SDLK_LEFT:
+            flip = SDL_FLIP_HORIZONTAL;
           case SDLK_RIGHT:
             // Stop moving when the left or right arrow key is released
             player->x_velocity = 0;
@@ -87,13 +92,12 @@ void update(Player* player) {
 }
 
 
-void render(SDL_Renderer* renderer, Player* player) {
+void render(SDL_Renderer* renderer, Player* player, SDL_RendererFlip flip) {
   // Clear the screen
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL_RenderClear(renderer);
-
   // Render the player
-  SDL_RenderCopy(renderer, player->texture, NULL, &player->rect);
+  SDL_RenderCopyEx(renderer, player->texture, NULL, &player->rect, 0, NULL, flip);
 
   // Update the screen
   SDL_RenderPresent(renderer);
@@ -133,7 +137,7 @@ int main(int argc, char* argv[]) {
   while (running) {
     handleInput(&player);
     update(&player);
-    render(renderer, &player);
+    render(renderer, &player, flip);
     SDL_Delay(1000 / 60);
   }
 
